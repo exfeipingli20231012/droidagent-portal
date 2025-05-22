@@ -10,7 +10,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/droid_run?style=social)](https://x.com/droid_run)
 
 ## 👁️ Overview
-Droidrun Portal is an Android accessibility service that provides real-time visual feedback and data collection for UI elements on the screen. It creates an interactive overlay that highlights clickable, checkable, editable, scrollable, and focusable elements, making it an invaluable tool for UI testing, automation development, and accessibility assessment.
+Droidagent Portal is an Android accessibility service that provides real-time visual feedback and data collection for UI elements on the screen. It creates an interactive overlay that highlights clickable, checkable, editable, scrollable, and focusable elements, making it an invaluable tool for UI testing, automation development, and accessibility assessment.
 
 ## ✨ Features
 
@@ -43,24 +43,24 @@ Droidrun Portal is an Android accessibility service that provides real-time visu
 
 ### ⚙️ Setup
 1. Install the app on your Android device
-2. Enable the accessibility service in Android Settings → Accessibility → Droidrun Portal
+2. Enable the accessibility service in Android Settings → Accessibility → Droidagent Portal
 3. Grant overlay permission when prompted
 
 ### 💻 ADB Commands
 ```bash
 # Get interactive elements as JSON (clickable, checkable, etc.)
-adb shell am broadcast -a com.droidrun.portal.GET_ELEMENTS
+adb shell am broadcast -a com.droidagent.portal.GET_ELEMENTS
 # Alternative command for interactive elements
-adb shell am broadcast -a com.droidrun.portal.GET_INTERACTIVE_ELEMENTS
+adb shell am broadcast -a com.droidagent.portal.GET_INTERACTIVE_ELEMENTS
 
 # Get ALL elements (even non-interactive ones) as JSON
-adb shell am broadcast -a com.droidrun.portal.GET_ALL_ELEMENTS
+adb shell am broadcast -a com.droidagent.portal.GET_ALL_ELEMENTS
 
 # Toggle overlay visibility
-adb shell am broadcast -a com.droidrun.portal.TOGGLE_OVERLAY --ez overlay_visible true/false
+adb shell am broadcast -a com.droidagent.portal.TOGGLE_OVERLAY --ez overlay_visible true/false
 
 # Reset element timestamps (useful for testing)
-adb shell am broadcast -a com.droidrun.portal.RETRIGGER_ELEMENTS
+adb shell am broadcast -a com.droidagent.portal.RETRIGGER_ELEMENTS
 ```
 
 ### 📤 Data Output
