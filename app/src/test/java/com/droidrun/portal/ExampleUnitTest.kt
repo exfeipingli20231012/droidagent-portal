@@ -1,4 +1,4 @@
-package com.droidrun.portal
+package com.droidagent.portal
 
 import org.junit.Test
 
