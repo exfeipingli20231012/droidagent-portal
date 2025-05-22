@@ -1,4 +1,4 @@
-package com.droidrun.portal
+package com.droidagent.portal
 
 import android.content.Context
 import android.content.Context.RECEIVER_EXPORTED
@@ -41,19 +41,19 @@ class MainActivity : AppCompatActivity() {
         private const val SLIDER_RANGE = MAX_OFFSET - MIN_OFFSET
         
         // Intent action for updating overlay offset
-        const val ACTION_UPDATE_OVERLAY_OFFSET = "com.droidrun.portal.UPDATE_OVERLAY_OFFSET"
+        const val ACTION_UPDATE_OVERLAY_OFFSET = "com.droidagent.portal.UPDATE_OVERLAY_OFFSET"
         const val EXTRA_OVERLAY_OFFSET = "overlay_offset"
     }
     
     // Broadcast receiver to get element data response
     private val elementDataReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.e("DROIDRUN_MAIN", "Received broadcast: ${intent.action}")
-            if (intent.action == DroidrunPortalService.ACTION_ELEMENTS_RESPONSE) {
+            Log.e("DROIDAGENT_MAIN", "Received broadcast: ${intent.action}")
+            if (intent.action == DroidagentPortalService.ACTION_ELEMENTS_RESPONSE) {
                 // Handle element data response
-                val data = intent.getStringExtra(DroidrunPortalService.EXTRA_ELEMENTS_DATA)
+                val data = intent.getStringExtra(DroidagentPortalService.EXTRA_ELEMENTS_DATA)
                 if (data != null) {
-                    Log.e("DROIDRUN_MAIN", "Received element data: ${data.substring(0, Math.min(100, data.length))}...")
+                    Log.e("DROIDAGENT_MAIN", "Received element data: ${data.substring(0, Math.min(100, data.length))}...")
                     
                     // Update UI with the data
                     statusText.text = "Received data: ${data.length} characters"
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         setupOffsetInput()
         
         // Register for responses
-        val filter = IntentFilter(DroidrunPortalService.ACTION_ELEMENTS_RESPONSE)
+        val filter = IntentFilter(DroidagentPortalService.ACTION_ELEMENTS_RESPONSE)
         registerReceiver(elementDataReceiver, filter, RECEIVER_EXPORTED)
         
         fetchButton.setOnClickListener {
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Log.e("DROIDRUN_MAIN", "Error applying input offset: ${e.message}")
+            Log.e("DROIDAGENT_MAIN", "Error applying input offset: ${e.message}")
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
@@ -262,10 +262,10 @@ class MainActivity : AppCompatActivity() {
             sendBroadcast(intent)
             
             statusText.text = "Updating element offset to: $offsetValue"
-            Log.e("DROIDRUN_MAIN", "Sent offset update: $offsetValue")
+            Log.e("DROIDAGENT_MAIN", "Sent offset update: $offsetValue")
         } catch (e: Exception) {
             statusText.text = "Error updating offset: ${e.message}"
-            Log.e("DROIDRUN_MAIN", "Error sending offset update: ${e.message}")
+            Log.e("DROIDAGENT_MAIN", "Error sending offset update: ${e.message}")
         }
     }
     
@@ -274,51 +274,51 @@ class MainActivity : AppCompatActivity() {
         try {
             unregisterReceiver(elementDataReceiver)
         } catch (e: Exception) {
-            Log.e("DROIDRUN_MAIN", "Error unregistering receiver: ${e.message}")
+            Log.e("DROIDAGENT_MAIN", "Error unregistering receiver: ${e.message}")
         }
     }
     
     private fun fetchElementData() {
         try {
             // Send broadcast to request elements
-            val intent = Intent(DroidrunPortalService.ACTION_GET_ELEMENTS)
+            val intent = Intent(DroidagentPortalService.ACTION_GET_ELEMENTS)
             sendBroadcast(intent)
             
             statusText.text = "Request sent, awaiting response..."
-            Log.e("DROIDRUN_MAIN", "Broadcast sent with action: ${DroidrunPortalService.ACTION_GET_ELEMENTS}")
+            Log.e("DROIDAGENT_MAIN", "Broadcast sent with action: ${DroidagentPortalService.ACTION_GET_ELEMENTS}")
         } catch (e: Exception) {
             statusText.text = "Error sending request: ${e.message}"
-            Log.e("DROIDRUN_MAIN", "Error sending broadcast: ${e.message}")
+            Log.e("DROIDAGENT_MAIN", "Error sending broadcast: ${e.message}")
         }
     }
     
     private fun toggleOverlayVisibility(visible: Boolean) {
         try {
-            val intent = Intent(DroidrunPortalService.ACTION_TOGGLE_OVERLAY).apply {
-                putExtra(DroidrunPortalService.EXTRA_OVERLAY_VISIBLE, visible)
+            val intent = Intent(DroidagentPortalService.ACTION_TOGGLE_OVERLAY).apply {
+                putExtra(DroidagentPortalService.EXTRA_OVERLAY_VISIBLE, visible)
             }
             sendBroadcast(intent)
             
             statusText.text = "Visualization overlays ${if (visible) "enabled" else "disabled"}"
-            Log.e("DROIDRUN_MAIN", "Toggled overlay visibility to: $visible")
+            Log.e("DROIDAGENT_MAIN", "Toggled overlay visibility to: $visible")
         } catch (e: Exception) {
             statusText.text = "Error changing visibility: ${e.message}"
-            Log.e("DROIDRUN_MAIN", "Error toggling overlay: ${e.message}")
+            Log.e("DROIDAGENT_MAIN", "Error toggling overlay: ${e.message}")
         }
     }
     
     private fun retriggerElements() {
         try {
             // Send broadcast to request element retrigger
-            val intent = Intent(DroidrunPortalService.ACTION_RETRIGGER_ELEMENTS)
+            val intent = Intent(DroidagentPortalService.ACTION_RETRIGGER_ELEMENTS)
             sendBroadcast(intent)
             
             statusText.text = "Refreshing UI elements..."
-            Log.e("DROIDRUN_MAIN", "Broadcast sent with action: ${DroidrunPortalService.ACTION_RETRIGGER_ELEMENTS}")
+            Log.e("DROIDAGENT_MAIN", "Broadcast sent with action: ${DroidagentPortalService.ACTION_RETRIGGER_ELEMENTS}")
             Toast.makeText(this, "Refreshing elements...", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             statusText.text = "Error refreshing elements: ${e.message}"
-            Log.e("DROIDRUN_MAIN", "Error sending retrigger broadcast: ${e.message}")
+            Log.e("DROIDAGENT_MAIN", "Error sending retrigger broadcast: ${e.message}")
         }
     }
 } 
