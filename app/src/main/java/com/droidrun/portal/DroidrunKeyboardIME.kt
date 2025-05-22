@@ -1,4 +1,4 @@
-package com.droidrun.portal
+package com.droidagent.portal
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,15 +13,15 @@ import android.view.View
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 
-class DroidrunKeyboardIME : InputMethodService() {
-    private val TAG = "DroidrunKeyboardIME"
-    private val IME_MESSAGE = "DROIDRUN_INPUT_TEXT"
-    private val IME_CHARS = "DROIDRUN_INPUT_CHARS"
-    private val IME_KEYCODE = "DROIDRUN_INPUT_CODE"
-    private val IME_META_KEYCODE = "DROIDRUN_INPUT_MCODE"
-    private val IME_EDITORCODE = "DROIDRUN_EDITOR_CODE"
-    private val IME_MESSAGE_B64 = "DROIDRUN_INPUT_B64"
-    private val IME_CLEAR_TEXT = "DROIDRUN_CLEAR_TEXT"
+class DroidagentKeyboardIME : InputMethodService() {
+    private val TAG = "DroidagentKeyboardIME"
+    private val IME_MESSAGE = "DROIDAGENT_INPUT_TEXT"
+    private val IME_CHARS = "DROIDAGENT_INPUT_CHARS"
+    private val IME_KEYCODE = "DROIDAGENT_INPUT_CODE"
+    private val IME_META_KEYCODE = "DROIDAGENT_INPUT_MCODE"
+    private val IME_EDITORCODE = "DROIDAGENT_EDITOR_CODE"
+    private val IME_MESSAGE_B64 = "DROIDAGENT_INPUT_B64"
+    private val IME_CLEAR_TEXT = "DROIDAGENT_CLEAR_TEXT"
     private var mReceiver: BroadcastReceiver? = null
 
     override fun onCreateInputView(): View {
