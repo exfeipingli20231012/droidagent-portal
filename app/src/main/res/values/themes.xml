@@ -16,7 +16,7 @@
         <!-- Text colors -->
         <item name="android:textColorPrimary">@color/black</item>
         <!-- Card style -->
-        <item name="materialCardViewStyle">@style/Widget..CardView</item>
+        <item name="materialCardViewStyle">@style/Widget.Droidagent.CardView</item>
         <!-- Button style -->
         <item name="materialButtonStyle">@style/Widget.Droidagent.Button</item>
     </style>
