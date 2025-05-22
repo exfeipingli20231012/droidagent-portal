@@ -1,4 +1,4 @@
-package com.droidrun.portal
+package com.droidagent.portal
 
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
@@ -22,10 +22,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.abs
 
-class DroidrunPortalService : AccessibilityService() {
+class DroidagentPortalService : AccessibilityService() {
     
     companion object {
-        private const val TAG = "DROIDRUN_PORTAL"
+        private const val TAG = "DROIDAGENT_PORTAL"
         private const val REFRESH_INTERVAL_MS = 250L // Single refresh interval for all updates
         private const val MIN_ELEMENT_SIZE = 5 // Minimum size for an element to be considered
         private const val MIN_FRAME_TIME_MS = 16L // Minimum time between frames (roughly 60 FPS)
@@ -41,14 +41,14 @@ class DroidrunPortalService : AccessibilityService() {
         private val OLD_ELEMENT_COLOR = Color.BLUE        // Oldest elements
         
         // Intent actions for ADB communication
-        const val ACTION_GET_ELEMENTS = "com.droidrun.portal.GET_ELEMENTS"
-        const val ACTION_ELEMENTS_RESPONSE = "com.droidrun.portal.ELEMENTS_RESPONSE"
-        const val ACTION_TOGGLE_OVERLAY = "com.droidrun.portal.TOGGLE_OVERLAY"
-        const val ACTION_RETRIGGER_ELEMENTS = "com.droidrun.portal.RETRIGGER_ELEMENTS"
-        const val ACTION_GET_ALL_ELEMENTS = "com.droidrun.portal.GET_ALL_ELEMENTS"
-        const val ACTION_GET_INTERACTIVE_ELEMENTS = "com.droidrun.portal.GET_INTERACTIVE_ELEMENTS"
-        const val ACTION_FORCE_HIDE_OVERLAY = "com.droidrun.portal.FORCE_HIDE_OVERLAY"
-        const val ACTION_UPDATE_OVERLAY_OFFSET = "com.droidrun.portal.UPDATE_OVERLAY_OFFSET"
+        const val ACTION_GET_ELEMENTS = "com.droidagent.portal.GET_ELEMENTS"
+        const val ACTION_ELEMENTS_RESPONSE = "com.droidagent.portal.ELEMENTS_RESPONSE"
+        const val ACTION_TOGGLE_OVERLAY = "com.droidagent.portal.TOGGLE_OVERLAY"
+        const val ACTION_RETRIGGER_ELEMENTS = "com.droidagent.portal.RETRIGGER_ELEMENTS"
+        const val ACTION_GET_ALL_ELEMENTS = "com.droidagent.portal.GET_ALL_ELEMENTS"
+        const val ACTION_GET_INTERACTIVE_ELEMENTS = "com.droidagent.portal.GET_INTERACTIVE_ELEMENTS"
+        const val ACTION_FORCE_HIDE_OVERLAY = "com.droidagent.portal.FORCE_HIDE_OVERLAY"
+        const val ACTION_UPDATE_OVERLAY_OFFSET = "com.droidagent.portal.UPDATE_OVERLAY_OFFSET"
         const val EXTRA_OVERLAY_OFFSET = "overlay_offset"
         const val EXTRA_ELEMENTS_DATA = "elements_data"
         const val EXTRA_ALL_ELEMENTS_DATA = "all_elements_data"
@@ -76,25 +76,25 @@ class DroidrunPortalService : AccessibilityService() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 ACTION_GET_ELEMENTS -> {
-                    Log.e("DROIDRUN_RECEIVER", "Received GET_ELEMENTS command")
+                    Log.e("DROIDAGENT_RECEIVER", "Received GET_ELEMENTS command")
                     broadcastElementData()
                 }
                 ACTION_GET_INTERACTIVE_ELEMENTS -> {
-                    Log.e("DROIDRUN_RECEIVER", "Received GET_INTERACTIVE_ELEMENTS command")
+                    Log.e("DROIDAGENT_RECEIVER", "Received GET_INTERACTIVE_ELEMENTS command")
                     broadcastElementData() // Use the same implementation as GET_ELEMENTS
                 }
                 ACTION_GET_ALL_ELEMENTS -> {
-                    Log.e("DROIDRUN_RECEIVER", "Received GET_ALL_ELEMENTS command")
+                    Log.e("DROIDAGENT_RECEIVER", "Received GET_ALL_ELEMENTS command")
                     broadcastAllElementsData()
                 }
                 ACTION_TOGGLE_OVERLAY -> {
                     if (!isOverlayManagerAvailable()) {
-                        Log.e("DROIDRUN_RECEIVER", "Cannot toggle overlay: OverlayManager not initialized")
+                        Log.e("DROIDAGENT_RECEIVER", "Cannot toggle overlay: OverlayManager not initialized")
                         return
                     }
                     
                     val shouldShow = intent.getBooleanExtra(EXTRA_OVERLAY_VISIBLE, !overlayVisible)
-                    Log.e("DROIDRUN_RECEIVER", "Received TOGGLE_OVERLAY command: $shouldShow")
+                    Log.e("DROIDAGENT_RECEIVER", "Received TOGGLE_OVERLAY command: $shouldShow")
                     if (shouldShow) {
                         overlayManager.showOverlay()
                         overlayVisible = true
@@ -109,12 +109,12 @@ class DroidrunPortalService : AccessibilityService() {
                 }
                 ACTION_UPDATE_OVERLAY_OFFSET -> {
                     if (!isOverlayManagerAvailable()) {
-                        Log.e("DROIDRUN_RECEIVER", "Cannot update offset: OverlayManager not initialized")
+                        Log.e("DROIDAGENT_RECEIVER", "Cannot update offset: OverlayManager not initialized")
                         return
                     }
                     
                     val offsetValue = intent.getIntExtra(EXTRA_OVERLAY_OFFSET, -128)
-                    Log.e("DROIDRUN_RECEIVER", "Received UPDATE_OVERLAY_OFFSET command: $offsetValue")
+                    Log.e("DROIDAGENT_RECEIVER", "Received UPDATE_OVERLAY_OFFSET command: $offsetValue")
                     
                     // Update the OverlayManager with the new offset
                     overlayManager.setPositionOffsetY(offsetValue)
@@ -126,11 +126,11 @@ class DroidrunPortalService : AccessibilityService() {
                     sendBroadcast(responseIntent)
                 }
                 ACTION_RETRIGGER_ELEMENTS -> {
-                    Log.e("DROIDRUN_RECEIVER", "Received RETRIGGER_ELEMENTS command")
+                    Log.e("DROIDAGENT_RECEIVER", "Received RETRIGGER_ELEMENTS command")
                     retriggerElements()
                 }
                 ACTION_FORCE_HIDE_OVERLAY -> {
-                    Log.e("DROIDRUN_RECEIVER", "Received FORCE_HIDE_OVERLAY command")
+                    Log.e("DROIDAGENT_RECEIVER", "Received FORCE_HIDE_OVERLAY command")
                     if (isOverlayManagerAvailable()) {
                         overlayManager.hideOverlay()
                         overlayVisible = false
@@ -143,9 +143,9 @@ class DroidrunPortalService : AccessibilityService() {
                             putExtra("force_hide_successful", true)
                         }
                         sendBroadcast(responseIntent)
-                        Log.e("DROIDRUN_RECEIVER", "Overlay forcibly hidden")
+                        Log.e("DROIDAGENT_RECEIVER", "Overlay forcibly hidden")
                     } else {
-                        Log.e("DROIDRUN_RECEIVER", "Cannot hide overlay: OverlayManager not initialized")
+                        Log.e("DROIDAGENT_RECEIVER", "Cannot hide overlay: OverlayManager not initialized")
                     }
                 }
             }
@@ -166,7 +166,7 @@ class DroidrunPortalService : AccessibilityService() {
                 addAction(ACTION_UPDATE_OVERLAY_OFFSET)
             }
             registerReceiver(broadcastReceiver, intentFilter, RECEIVER_EXPORTED)
-            Log.e("DROIDRUN_RECEIVER", "Registered receiver for commands with EXPORTED flag")
+            Log.e("DROIDAGENT_RECEIVER", "Registered receiver for commands with EXPORTED flag")
             
             overlayManager = OverlayManager(this)
             isInitialized = true
@@ -178,7 +178,7 @@ class DroidrunPortalService : AccessibilityService() {
             screenBounds.set(0, 0, size.x, size.y)
         } catch (e: Exception) {
             Log.e(TAG, "Error initializing OverlayManager: ${e.message}", e)
-            Log.e("DROIDRUN_RECEIVER", "Error in onCreate: ${e.message}", e)
+            Log.e("DROIDAGENT_RECEIVER", "Error in onCreate: ${e.message}", e)
         }
     }
 
@@ -187,7 +187,7 @@ class DroidrunPortalService : AccessibilityService() {
         try {
             try {
                 unregisterReceiver(broadcastReceiver)
-                Log.e("DROIDRUN_RECEIVER", "Unregistered command receiver")
+                Log.e("DROIDAGENT_RECEIVER", "Unregistered command receiver")
             } catch (e: Exception) {
                 Log.e(TAG, "Error unregistering receiver: ${e.message}")
             }
@@ -770,7 +770,7 @@ class DroidrunPortalService : AccessibilityService() {
     private fun broadcastElementData() {
         try {
             if (!isInitialized) {
-                Log.e("DROIDRUN_DEBUG", "Service not initialized yet")
+                Log.e("DROIDAGENT_DEBUG", "Service not initialized yet")
                 return
             }
 
@@ -871,8 +871,8 @@ class DroidrunPortalService : AccessibilityService() {
                     }
                     
                     // Log statistics
-                    Log.e("DROIDRUN_TEXT", "======= INTERACTIVE ELEMENTS START =======")
-                    Log.e("DROIDRUN_TEXT", "Found ${interactiveElements.size} interactive elements, ${rootElements.size} root elements")
+                    Log.e("DROIDAGENT_TEXT", "======= INTERACTIVE ELEMENTS START =======")
+                    Log.e("DROIDAGENT_TEXT", "Found ${interactiveElements.size} interactive elements, ${rootElements.size} root elements")
                     
                     // Create the HTML-like structure as a JSON array - ONLY include root elements at top level
                     val elementsArray = JSONArray()
@@ -995,9 +995,9 @@ class DroidrunPortalService : AccessibilityService() {
                             " (parent: ${parent?.text?.take(20) ?: "unknown"})"
                         } else ""
                         
-                        Log.e("DROIDRUN_TEXT", "Index: ${element.overlayIndex} - $type - $role$parentInfo - ${sanitizeText(element.text ?: "")} (${element.className})")
+                        Log.e("DROIDAGENT_TEXT", "Index: ${element.overlayIndex} - $type - $role$parentInfo - ${sanitizeText(element.text ?: "")} (${element.className})")
                     }
-                    Log.e("DROIDRUN_TEXT", "======= INTERACTIVE ELEMENTS END =======")
+                    Log.e("DROIDAGENT_TEXT", "======= INTERACTIVE ELEMENTS END =======")
                     
                     val jsonData = elementsArray.toString()
                     
@@ -1005,7 +1005,7 @@ class DroidrunPortalService : AccessibilityService() {
                         val outputDir = getExternalFilesDir(null)
                         val jsonFile = java.io.File(outputDir, "element_data.json")
                         jsonFile.writeText(jsonData)
-                        Log.e("DROIDRUN_FILE", "JSON data written to: ${jsonFile.absolutePath}")
+                        Log.e("DROIDAGENT_FILE", "JSON data written to: ${jsonFile.absolutePath}")
                         
                         // Split the JSON data into chunks to avoid logcat truncation
                         val maxChunkSize = 4000
@@ -1014,10 +1014,10 @@ class DroidrunPortalService : AccessibilityService() {
                         
                         // Output each chunk with metadata for reassembly
                         chunks.forEachIndexed { index, chunk ->
-                            Log.e("DROIDRUN_ADB_DATA", "CHUNK|$index|$totalChunks|$chunk")
+                            Log.e("DROIDAGENT_ADB_DATA", "CHUNK|$index|$totalChunks|$chunk")
                         }
                     } catch (e: Exception) {
-                        Log.e("DROIDRUN_FILE", "Error writing to file: ${e.message}")
+                        Log.e("DROIDAGENT_FILE", "Error writing to file: ${e.message}")
                     }
                     
                     val responseIntent = Intent(ACTION_ELEMENTS_RESPONSE).apply {
@@ -1027,13 +1027,13 @@ class DroidrunPortalService : AccessibilityService() {
                     
                 } catch (e: Exception) {
                     Log.e(TAG, "Error processing elements: ${e.message}", e)
-                    Log.e("DROIDRUN_ADB_RESPONSE", "ERROR: ${e.message}")
+                    Log.e("DROIDAGENT_ADB_RESPONSE", "ERROR: ${e.message}")
                 }
             }, 100)
             
         } catch (e: Exception) {
             Log.e(TAG, "Error broadcasting element data: ${e.message}", e)
-            Log.e("DROIDRUN_ADB_RESPONSE", "ERROR: ${e.message}")
+            Log.e("DROIDAGENT_ADB_RESPONSE", "ERROR: ${e.message}")
         }
     }
     
@@ -1045,7 +1045,7 @@ class DroidrunPortalService : AccessibilityService() {
     
     private fun retriggerElements() {
         if (!isInitialized || visibleElements.isEmpty()) {
-            Log.e("DROIDRUN_RECEIVER", "Cannot retrigger - service not initialized or no elements")
+            Log.e("DROIDAGENT_RECEIVER", "Cannot retrigger - service not initialized or no elements")
             return
         }
         
@@ -1068,17 +1068,17 @@ class DroidrunPortalService : AccessibilityService() {
             }
             sendBroadcast(responseIntent)
             
-            Log.e("DROIDRUN_RETRIGGER", "Successfully reset weights for ${visibleElements.size} elements")
+            Log.e("DROIDAGENT_RETRIGGER", "Successfully reset weights for ${visibleElements.size} elements")
         } catch (e: Exception) {
             Log.e(TAG, "Error retriggering elements: ${e.message}", e)
-            Log.e("DROIDRUN_RETRIGGER", "ERROR: ${e.message}")
+            Log.e("DROIDAGENT_RETRIGGER", "ERROR: ${e.message}")
         }
     }
 
     private fun broadcastAllElementsData() {
         try {
             if (!isInitialized) {
-                Log.e("DROIDRUN_DEBUG", "Service not initialized yet")
+                Log.e("DROIDAGENT_DEBUG", "Service not initialized yet")
                 return
             }
 
@@ -1175,8 +1175,8 @@ class DroidrunPortalService : AccessibilityService() {
                     }
                     
                     // Log statistics
-                    Log.e("DROIDRUN_TEXT", "======= ALL ELEMENTS START =======")
-                    Log.e("DROIDRUN_TEXT", "Found ${allElementsList.size} total elements, ${rootElements.size} root elements")
+                    Log.e("DROIDAGENT_TEXT", "======= ALL ELEMENTS START =======")
+                    Log.e("DROIDAGENT_TEXT", "Found ${allElementsList.size} total elements, ${rootElements.size} root elements")
                     
                     // Create the HTML-like structure as a JSON array
                     val elementsArray = JSONArray()
@@ -1278,9 +1278,9 @@ class DroidrunPortalService : AccessibilityService() {
                     }
                     
                     // Log element counts for debugging
-                    Log.e("DROIDRUN_TEXT", "Total root elements: ${rootElements.size}")
-                    Log.e("DROIDRUN_TEXT", "Total elements in hierarchy: ${allElementsList.size}")
-                    Log.e("DROIDRUN_TEXT", "======= ALL ELEMENTS END =======")
+                    Log.e("DROIDAGENT_TEXT", "Total root elements: ${rootElements.size}")
+                    Log.e("DROIDAGENT_TEXT", "Total elements in hierarchy: ${allElementsList.size}")
+                    Log.e("DROIDAGENT_TEXT", "======= ALL ELEMENTS END =======")
                     
                     val jsonData = elementsArray.toString()
                     
@@ -1288,7 +1288,7 @@ class DroidrunPortalService : AccessibilityService() {
                         val outputDir = getExternalFilesDir(null)
                         val jsonFile = java.io.File(outputDir, "all_elements_data.json")
                         jsonFile.writeText(jsonData)
-                        Log.e("DROIDRUN_FILE", "All elements JSON data written to: ${jsonFile.absolutePath}")
+                        Log.e("DROIDAGENT_FILE", "All elements JSON data written to: ${jsonFile.absolutePath}")
                         
                         // Split the JSON data into chunks to avoid logcat truncation
                         val maxChunkSize = 4000
@@ -1297,10 +1297,10 @@ class DroidrunPortalService : AccessibilityService() {
                         
                         // Output each chunk with metadata for reassembly
                         chunks.forEachIndexed { index, chunk ->
-                            Log.e("DROIDRUN_ADB_ALL_DATA", "CHUNK|$index|$totalChunks|$chunk")
+                            Log.e("DROIDAGENT_ADB_ALL_DATA", "CHUNK|$index|$totalChunks|$chunk")
                         }
                     } catch (e: Exception) {
-                        Log.e("DROIDRUN_FILE", "Error writing all elements to file: ${e.message}")
+                        Log.e("DROIDAGENT_FILE", "Error writing all elements to file: ${e.message}")
                     }
                     
                     val responseIntent = Intent(ACTION_ELEMENTS_RESPONSE).apply {
@@ -1310,13 +1310,13 @@ class DroidrunPortalService : AccessibilityService() {
                     
                 } catch (e: Exception) {
                     Log.e(TAG, "Error processing all elements: ${e.message}", e)
-                    Log.e("DROIDRUN_ADB_RESPONSE", "ERROR: ${e.message}")
+                    Log.e("DROIDAGENT_ADB_RESPONSE", "ERROR: ${e.message}")
                 }
             }, 100)
             
         } catch (e: Exception) {
             Log.e(TAG, "Error broadcasting all element data: ${e.message}", e)
-            Log.e("DROIDRUN_ADB_RESPONSE", "ERROR: ${e.message}")
+            Log.e("DROIDAGENT_ADB_RESPONSE", "ERROR: ${e.message}")
         }
     }
 
